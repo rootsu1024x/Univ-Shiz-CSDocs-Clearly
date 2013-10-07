@@ -1,3 +1,5 @@
+var isRewrited = false;
+
 //黒魔術
 function addIndex(){
 	$("h1").after('<p id="IDX"><a name="allidx">インデックス</a></p><ul id="CTS"></ul>')
@@ -38,6 +40,21 @@ function headingImageRewrite(){
 	$("h3").css("text-align","left");
 }
 
+function invisibleCanceler(){
+	var sel = document.getSelection();
+	var tag = sel.anchorNode.parentNode;
+	var c = $(tag).css("color");
+	var c = c.substr(4, c.length-1);
+	var cc = c.split(",");
+	var r = parseInt(cc[0]);
+	var g = parseInt(cc[1]);
+	var b = parseInt(cc[2]);
+	var rr = 255 - r;
+	var rb = 255 - b;
+	var rg = 255 - g;
+	$(tag).css("color","rgb("+rr+","+rg+","+rb+")");
+}
+
 function rewrite(){
 	addIndex();
 	headingImageRewrite();
@@ -50,10 +67,15 @@ function rewrite(){
 	highlightText("添付","#00FF00")
 }
 
+
 $(function(){
 	$(window).keydown(function(e){
-		if(e.ctrlKey && e.keyCode == 81){//Ctrl+qでリライト
+		if(e.ctrlKey && e.keyCode == 81 && !isRewrited){//Ctrl+qでリライト
 			rewrite();
+			isRewrited = true;
+		}
+		if(e.ctrlKey && e.keyCode == 73){//Ctrl+iで選択範囲のインビジブルキャンセラ
+			invisibleCanceler(); //インビジブルキャンセラ発動！
 		}
 	});
 });

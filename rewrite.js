@@ -87,7 +87,7 @@ function invisibleCanceler(){
 }
 
 function viewBookmark(){
-	var b = localStorage['bm'];
+	var b = localStorage[document.URL+'-bm'];
 	if(b && !bookmarked){
 		bookmarked = true;
 		$("h2:eq("+b+")").prepend(bookmarkTag);
@@ -96,7 +96,7 @@ function viewBookmark(){
 }
 
 function delBookmark(){
-	var b = localStorage['bm']
+	var b = localStorage[document.URL+'-bm']
 	if(b && bookmarked){
 		bookmarked = false;
 		$("h2:eq("+b+")").html($("h2:eq("+b+")").html().substring(bookmarkTag.length,$("h2:eq("+b+")").html().length));
@@ -107,7 +107,7 @@ function delBookmark(){
 
 function bookmark(i){
 	delBookmark();
-	localStorage['bm'] = i;
+	localStorage[document.URL+'-bm'] = i;
 	viewBookmark();
 }
 
@@ -151,10 +151,24 @@ function rewrite(){
 
 
 $(function(){
+	if(localStorage[document.URL+'-rwt'] == "true"){
+		rewrite();
+		isRewrited = true;
+	}
 	$(window).keydown(function(e){
 		if(e.ctrlKey && e.keyCode == 81 && !isRewrited){//Ctrl+qでリライト
 			rewrite();
 			isRewrited = true;
+		}
+		if(e.ctrlKey && e.altKey && e.keyCode == 81){//Ctrl+Alt+qでリライト・レコード
+			if(!isRewrited){
+				rewrite();
+				isRewrited = true;
+			}
+			localStorage[document.URL+'-rwt'] = "true";
+		}
+		if(e.ctrlKey && e.altKey && e.keyCode == 87){//Ctrl+Alt+wでリライト・レコード・キャンセル
+			localStorage[document.URL+'-rwt'] = undefined;
 		}
 		if(e.ctrlKey && e.keyCode == 73){//Ctrl+iで選択範囲のインビジブルキャンセラ
 			invisibleCanceler(); //インビジブルキャンセラ発動！
